@@ -1,5 +1,6 @@
 var utils = require('../lib/utils');
 var extend = utils.extend;
+const base64 = require('nodejs-base64-encode');
 
 var Support = function(config) {
   this.config = config;
@@ -21,6 +22,9 @@ var Support = function(config) {
  * @param [opts.domainid] String
  * @param [opts.customfields] String Base 64 serialized array of field IDs => values
  * @param [opts.noemail] Boolean
+ * @param [opts.attachments] array of file attachments
+ *         Can be the direct output of a multipart-form-data form submission ($_FILES superglobal in PHP) 
+ *         or an array of arrays consisting of both a filename and data keys.
  * @param callback
  */
 Support.prototype.openTicket = function (clientid, department, subject, message, opts, callback) {
@@ -31,6 +35,11 @@ Support.prototype.openTicket = function (clientid, department, subject, message,
     subject: subject,
     message: message
   };
+
+  if(opts.attachments)
+  {
+    opts.attachments = base64.encode(JSON.stringify(opts.attachments), 'base64');
+  }
 
   if(typeof opts === 'function'){
     callback = opts;
@@ -96,6 +105,9 @@ Support.prototype.getTicket = function (ticketid, callback) {
  * @param [opts.adminusername] String Name to show on message
  * @param [opts.status] String
  * @param [opts.customfields] String Base64 encoded serialized array of custom fields
+ * @param [opts.attachments] array of file attachments
+ *         Can be the direct output of a multipart-form-data form submission ($_FILES superglobal in PHP) 
+ *         or an array of arrays consisting of both a filename and data keys.
  * @param callback
  */
 Support.prototype.replyTicket = function (ticketid, message, opts, callback) {
@@ -111,6 +123,11 @@ Support.prototype.replyTicket = function (ticketid, message, opts, callback) {
     options = extend(options, opts);
   }
 
+  if(opts.attachments)
+  {
+    opts.attachments = base64.encode(JSON.stringify(opts.attachments), 'base64');
+  }
+  
   if(typeof options.adminusername === 'undefined' && typeof options.clientid === 'undefined'){
     options.adminusername = 'Auto-response';
   }
