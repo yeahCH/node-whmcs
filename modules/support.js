@@ -36,11 +36,6 @@ Support.prototype.openTicket = function (clientid, department, subject, message,
     message: message
   };
 
-  if(opts.attachments)
-  {
-    opts.attachments = base64.encode(JSON.stringify(opts.attachments), 'base64');
-  }
-
   if(typeof opts === 'function'){
     callback = opts;
   } else {
@@ -123,11 +118,6 @@ Support.prototype.replyTicket = function (ticketid, message, opts, callback) {
     options = extend(options, opts);
   }
 
-  if(opts.attachments)
-  {
-    opts.attachments = base64.encode(JSON.stringify(opts.attachments), 'base64');
-  }
-  
   if(typeof options.adminusername === 'undefined' && typeof options.clientid === 'undefined'){
     options.adminusername = 'Auto-response';
   }
